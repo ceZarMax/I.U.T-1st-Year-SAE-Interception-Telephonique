@@ -10,8 +10,6 @@
 ---
 
 
-SAE Introduction à la cybersécurité qui sera sur la **Réalisation d'un CTF débutant orienté sur le réseau et sur l'utilisation de Python et Scapy**. </br>
-
 ## ℹ️ Introduction 
 
 LA SAÉ24 est une SAÉ dite intégrative de fin de première année. Elle permet, dans 
