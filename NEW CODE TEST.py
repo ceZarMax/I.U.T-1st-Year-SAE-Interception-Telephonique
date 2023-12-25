@@ -57,7 +57,7 @@ def arpspoof():
 	targetIP = input("Entrez l'adresse IP de la victime : ") # On défini la fonction targetIP qui sera l'IP de la victime
 	spoofIP = input("Entrez l'adresse IP que vous voulez usurper : ") # On défini la fonction spoofIP qui sera l'IP que nous voudrons usurper.
 	routeurIP = input("Entrez l'adresse IP du routeur : ")
-    	interface = input("Entrez votre interface ethernet : ")
+	interface = input("Entrez votre interface ethernet : ")
 # -----------------
     # RECHERCHER LA MAC
 	def recherche_mac(targetIP,interface):
