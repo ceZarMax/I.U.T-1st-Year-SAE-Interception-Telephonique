@@ -59,15 +59,17 @@ def arpspoof():
 	routeurIP = input("Entrez l'adresse IP du routeur : ")
 	interface = input("Entrez votre interface ethernet : ")
 # -----------------
-    # RECHERCHER LA MAC
-	def recherche_mac(targetIP,interface):
-		pkt7 = Ether(dst="ff:ff:ff:ff:ff") / ARP(pdst=targetIP) 
-		ans = srp1(pkt7, iface = interface, timeout=2)
-		if ans:
-	            mac = ans[0][1].hwsrc
-	            return str(mac)
-	        else:
-	            print("L'adresse MAC est inexistante")
+	    # RECHERCHER LA MAC
+	def recherche_mac(targetIP, interface):
+	    pkt7 = Ether(dst="ff:ff:ff:ff:ff") / ARP(pdst=targetIP) 
+	    ans = srp1(pkt7, iface=interface, timeout=2)
+	    
+	    if ans:
+	        mac = ans[0][1].hwsrc
+	        return str(mac)
+	    else:
+	        print("L'adresse MAC est inexistante")
+	
 	recherche_mac()
 # -----------------
 
