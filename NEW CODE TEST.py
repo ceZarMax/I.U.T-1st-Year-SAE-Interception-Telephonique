@@ -10,12 +10,11 @@ import time # on importe la librairie time permettant de mettre des pauses entre
 import argparse # on importe la librairie argparse permettant d'ajouter des arguments très simplement.
 import sys # on importe la librairie sys pour permettre des impressions dynamiques
 
-
-#---------------------------------------------------------
+# ---------------------------------------------------------
 
 # Boîte à outil
 
-#---------------------------------------------------------
+# ---------------------------------------------------------
 
 print("""  _____                           __  __                      _   _           
   / ____|                         |  \/  |                    | | (_)           
@@ -124,9 +123,7 @@ def arpspoof():
 
 if __name__ == "__main__":
     main()
-
-
-
+  
 #-----------------------------------------------------------------------------
 #------------------------------ PARTIE CODE ----------------------------------
 #-----------------------------------------------------------------------------
